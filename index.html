@@ -535,7 +535,7 @@
         </div>
 
         <div class="form-card">
-          <form id="contactForm" novalidate>
+          <form id="contactForm" action="https://formspree.io/f/mjgzlbww" method="POST" novalidate>
 
             <div class="form-row">
               <div class="form-group">
@@ -615,47 +615,57 @@
 
     form.addEventListener('submit', async e => {
       e.preventDefault();
+
       notice.className = 'form-notice';
       notice.textContent = '';
 
-      const name    = document.getElementById('name').value.trim();
-      const email   = document.getElementById('email').value.trim();
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
       const biztype = document.getElementById('biztype').value;
       const message = document.getElementById('message').value.trim();
 
       let valid = true;
-      if (!name)               { setError('name', true);    valid = false; }
-      if (!validateEmail(email)){ setError('email', true);  valid = false; }
-      if (!biztype)            { setError('biztype', true); valid = false; }
-      if (!message)            { setError('message', true); valid = false; }
+
+      if (!name) {
+        setError('name', true);
+        valid = false;
+      }
+
+      if (!validateEmail(email)) {
+        setError('email', true);
+        valid = false;
+      }
+
+      if (!biztype) {
+        setError('biztype', true);
+        valid = false;
+      }
+
+      if (!message) {
+        setError('message', true);
+        valid = false;
+      }
+
       if (!valid) return;
 
       submitBtn.disabled = true;
-      submitBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Sending…`;
-
-      // ─────────────────────────────────────────────────────────────────────
-      // TODO: Replace the fetch below with your real email API call.
-      // Options:
-      //   • Resend: https://resend.com/docs — POST to /api/send
-      //   • SendGrid: https://docs.sendgrid.com/api-reference/mail-send
-      //   • Nodemailer: set up an Express / Next.js API route at /api/contact
-      //   • Formspree: action="https://formspree.io/f/YOUR_FORM_ID"
-      //
-      // All calls should forward fields to: acepowell101@gmail.com
-      // NEVER expose API keys in frontend; use a server-side proxy or env vars.
-      // ─────────────────────────────────────────────────────────────────────
-
-      // Simulated send for demo purposes (remove this block in production):
-      await new Promise(r => setTimeout(r, 1400));
-      const simSuccess = true; // toggle to false to test error state
+      submitBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Sending...`;
 
       try {
-        if (simSuccess) {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: {
+            Accept: 'application/json'
+          }
+        });
+
+        if (response.ok) {
           notice.className = 'form-notice success';
           notice.textContent = '✅ Thank you. Your message has been sent.';
           form.reset();
         } else {
-          throw new Error('Server error');
+          throw new Error('Formspree submission failed');
         }
       } catch {
         notice.className = 'form-notice error-msg';
