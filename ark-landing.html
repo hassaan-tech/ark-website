@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ARK — Coming Soon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #8CC900;
+      --green-dark: #6FA300;
+      --green-light: #FFFFFF;
+      --green-mid: #D8F195;
+      --green-glow: rgba(140, 201, 0, 0.18);
+      --black: #171717;
+      --muted: #666666;
+      --white: #FFFFFF;
+      --card-bg: #FFFFFF;
+      --border: #E8F3CC;
+      --shadow: 0 4px 24px rgba(140,201,0,0.10), 0 2px 8px rgba(0,0,0,0.06);
+      --shadow-lg: 0 16px 48px rgba(140,201,0,0.14), 0 4px 16px rgba(0,0,0,0.08);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--green-light);
+      color: var(--black);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── NOISE TEXTURE OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: 0.5;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 clamp(1.5rem, 5vw, 4rem);
+      height: 72px;
+      background: rgba(255, 255, 255, 0.90);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    .logo-mark {
+      width: 40px; height: 40px;
+      background: var(--green);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 12px rgba(140,201,0,0.35);
+    }
+    .logo-mark svg { width: 22px; height: 22px; fill: white; }
+    .logo-text {
+      font-family: 'Sora', sans-serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--black);
+      letter-spacing: -0.02em;
+    }
+    .logo-text span { color: var(--green); }
+
+    nav { display: flex; align-items: center; gap: 0.5rem; }
+    nav a {
+      text-decoration: none;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 0.45rem 1rem;
+      border-radius: 999px;
+      transition: all 0.2s;
+    }
+    nav a:hover { background: var(--green-mid); color: var(--black); }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--green);
+      color: white;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 0.5rem 1.25rem;
+      border-radius: 999px;
+      border: none; cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      box-shadow: 0 4px 14px rgba(140,201,0,0.35);
+    }
+    .btn-primary:hover {
+      background: var(--green-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(140,201,0,0.45);
+    }
+    .btn-primary:active { transform: translateY(0); }
+
+    /* ─── MAIN ─── */
+    main {
+      position: relative; z-index: 1;
+      padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 5vw, 4rem);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      min-height: calc(100vh - 72px - 10rem);
+    }
+
+    .hero-content { animation: fadeUp 0.9s ease both; }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--green-mid);
+      border: 1.5px solid var(--green);
+      color: var(--green-dark);
+      font-weight: 700;
+      font-size: 0.78rem;
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .badge-dot {
+      width: 7px; height: 7px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .hero-headline {
+      font-family: 'Sora', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--black);
+      margin-bottom: 1rem;
+    }
+    .hero-headline .coming-soon {
+      display: block;
+      background: linear-gradient(90deg, var(--green) 0%, #a8e500 50%, var(--green) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 4s linear infinite;
+    }
+
+    .hero-sub {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(1.05rem, 2vw, 1.3rem);
+      font-weight: 600;
+      color: var(--green-dark);
+      margin-bottom: 1.2rem;
+      letter-spacing: -0.01em;
+    }
+
+    .hero-para {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.75;
+      max-width: 480px;
+      margin-bottom: 2rem;
+    }
+
+    .hero-ctas { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: transparent;
+      color: var(--black);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 0.5rem 1.25rem;
+      border-radius: 999px;
+      border: 2px solid var(--border);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--green); color: var(--green-dark); background: var(--green-light); }
+
+    /* ─── HERO VISUAL / MOCKUP IMAGE ─── */
+    .hero-visual {
+      display: flex; justify-content: center; align-items: center;
+      animation: fadeUp 0.9s 0.2s ease both;
+    }
+
+    .hero-mockup-img {
+      width: 100%;
+      max-width: 480px;
+      height: auto;
+      display: block;
+      /* Reference your mockup: replace ./images/ark-hero-mockup.png in the HTML below */
+    }
+
+    /* ─── STATS ─── */
+    .stats-row {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      margin: 3.5rem 0 0;
+      animation: fadeUp 1s 0.5s both;
+    }
+    .stat-card {
+      flex: 1; min-width: 150px;
+      background: white;
+      border-radius: 16px;
+      padding: 1.2rem 1.5rem;
+      border: 1.5px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+    .stat-num {
+      font-family: 'Sora', sans-serif;
+      font-weight: 800;
+      font-size: 1.7rem;
+      color: var(--green);
+      letter-spacing: -0.03em;
+    }
+    .stat-label {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* ─── CONTACT FORM ─── */
+    .contact-section {
+      margin-top: 5rem;
+      animation: fadeUp 1s 0.7s both;
+    }
+    .section-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--green-dark);
+      margin-bottom: 0.5rem;
+    }
+    .section-title {
+      font-family: 'Sora', sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      color: var(--black);
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+    }
+    .section-sub {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    .contact-info { }
+    .contact-feature {
+      display: flex; gap: 1rem; align-items: flex-start;
+      margin-bottom: 1.5rem;
+    }
+    .cf-icon {
+      width: 44px; height: 44px; flex-shrink: 0;
+      background: var(--green-mid);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+    }
+    .cf-title { font-weight: 700; font-size: 0.92rem; margin-bottom: 2px; }
+    .cf-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
+
+    .form-card {
+      background: white;
+      border-radius: 24px;
+      padding: clamp(1.5rem, 4vw, 2.5rem);
+      border: 1.5px solid var(--border);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .form-group { margin-bottom: 1.1rem; }
+    .form-group label {
+      display: block;
+      font-weight: 700;
+      font-size: 0.82rem;
+      color: var(--black);
+      margin-bottom: 0.4rem;
+    }
+    .form-group label .req { color: var(--green); margin-left: 2px; }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--black);
+      background: var(--green-light);
+      border: 2px solid transparent;
+      border-radius: 12px;
+      padding: 0.7rem 1rem;
+      outline: none;
+      transition: all 0.2s;
+      -webkit-appearance: none;
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: #aaa; font-weight: 500; }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--green);
+      background: white;
+      box-shadow: 0 0 0 4px rgba(140,201,0,0.12);
+    }
+    .form-group input.error,
+    .form-group select.error,
+    .form-group textarea.error {
+      border-color: #e74c3c;
+      background: #fff5f5;
+    }
+    .field-error {
+      font-size: 0.75rem;
+      color: #e74c3c;
+      font-weight: 600;
+      margin-top: 4px;
+      display: none;
+    }
+    .field-error.show { display: block; }
+    .form-group textarea { min-height: 110px; resize: vertical; }
+    .form-group select { cursor: pointer; }
+
+    .btn-submit {
+      width: 100%;
+      padding: 0.85rem;
+      background: var(--green);
+      color: white;
+      font-family: 'Sora', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 6px 20px rgba(140,201,0,0.35);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: 0.5rem;
+    }
+    .btn-submit:hover { background: var(--green-dark); transform: translateY(-2px); box-shadow: 0 10px 28px rgba(140,201,0,0.45); }
+    .btn-submit:active { transform: translateY(0); }
+    .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+    .form-notice {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-align: center;
+      display: none;
+    }
+    .form-notice.success { background: var(--green-mid); color: var(--green-dark); display: block; }
+    .form-notice.error-msg { background: #ffeaea; color: #c0392b; display: block; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      position: relative; z-index: 1;
+      text-align: center;
+      padding: 2.5rem clamp(1.5rem, 5vw, 4rem);
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.83rem;
+      font-weight: 600;
+    }
+    footer a { color: var(--green-dark); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes shimmer {
+      to { background-position: -200% center; }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.8); }
+    }
+
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; text-align: center; gap: 2rem; min-height: auto; padding-bottom: 1rem; }
+      .hero-para { margin-left: auto; margin-right: auto; }
+      .hero-ctas { justify-content: center; }
+      .hero-visual { order: -1; padding: 2rem 0 0; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .contact-info { display: none; }
+    }
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+      nav a:not(.btn-primary) { display: none; }
+      .stats-row { gap: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <a href="#" class="logo" aria-label="ARK home">
+      <img src="./images/ark-logo.webp" alt="ARK Logo" style="height:48px;width:auto;object-fit:contain;" />
+    </a>
+    <nav>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <a href="#contact" class="btn-primary">Get Updates</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero" id="about">
+      <div class="hero-content">
+        <div class="badge">
+          <span class="badge-dot"></span>
+          Launching Soon
+        </div>
+        <h1 class="hero-headline">
+          ARK is
+          <span class="coming-soon">Coming Soon</span>
+        </h1>
+        <p class="hero-sub">Kindness on demand, anytime, anywhere.</p>
+        <p class="hero-para">ARK is building a community-first platform where people can request, offer, and share small acts of kindness that create real impact in their local neighbourhoods.</p>
+        <div class="hero-ctas">
+          <a href="#contact" class="btn-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Get Early Access
+          </a>
+          <a href="#contact" class="btn-outline">Partner With Us</a>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <!-- Replace src with your hero mockup image path e.g. ./images/ark-hero-mockup.png -->
+        <img
+          src="./images/ark-hero-mockup.webp"
+          alt="ARK app mockup"
+          class="hero-mockup-img"
+        />
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-num">Free</div>
+        <div class="stat-label">Always to request help</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">Local</div>
+        <div class="stat-label">Community first</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">Real</div>
+        <div class="stat-label">Verified people, real acts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">24/7</div>
+        <div class="stat-label">Help when you need it</div>
+      </div>
+    </div>
+
+    <!-- CONTACT -->
+    <section class="contact-section" id="contact">
+      <p class="section-label">Get Involved</p>
+      <h2 class="section-title">Want to partner with ARK?</h2>
+      <p class="section-sub">Send us a message and we'll get back to you.</p>
+
+      <div class="contact-grid">
+        <div class="contact-info">
+          <div class="contact-feature">
+            <div class="cf-icon">🤝</div>
+            <div>
+              <div class="cf-title">Community Partners</div>
+              <div class="cf-desc">Work with local organisations to expand ARK's reach and impact where it matters most.</div>
+            </div>
+          </div>
+          <div class="contact-feature">
+            <div class="cf-icon">🏢</div>
+            <div>
+              <div class="cf-title">Corporate Sponsorship</div>
+              <div class="cf-desc">Align your brand with genuine kindness. Support real community initiatives.</div>
+            </div>
+          </div>
+          <div class="contact-feature">
+            <div class="cf-icon">💡</div>
+            <div>
+              <div class="cf-title">Tech & Innovation</div>
+              <div class="cf-desc">Build with us. We're looking for tech partners who share our mission.</div>
+            </div>
+          </div>
+          <div class="contact-feature">
+            <div class="cf-icon">📣</div>
+            <div>
+              <div class="cf-title">Media & Press</div>
+              <div class="cf-desc">Stories of kindness deserve to be told. Let's connect.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <form id="contactForm" novalidate>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name">Name <span class="req">*</span></label>
+                <input type="text" id="name" name="name" placeholder="Your full name" autocomplete="name" />
+                <div class="field-error" id="name-error">Please enter your name.</div>
+              </div>
+              <div class="form-group">
+                <label for="email">Email Address <span class="req">*</span></label>
+                <input type="email" id="email" name="email" placeholder="you@company.com" autocomplete="email" />
+                <div class="field-error" id="email-error">Please enter a valid email.</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="biztype">Business Type <span class="req">*</span></label>
+              <select id="biztype" name="biztype">
+                <option value="">Select your organisation type…</option>
+                <option value="npo">Non-profit / Charity</option>
+                <option value="corporate">Corporate / Enterprise</option>
+                <option value="sme">Small / Medium Business</option>
+                <option value="startup">Startup</option>
+                <option value="government">Government / Public Sector</option>
+                <option value="media">Media / Press</option>
+                <option value="individual">Individual / Freelancer</option>
+                <option value="other">Other</option>
+              </select>
+              <div class="field-error" id="biztype-error">Please select a business type.</div>
+            </div>
+
+            <div class="form-group">
+              <label for="message">Message <span class="req">*</span></label>
+              <textarea id="message" name="message" placeholder="Tell us about your organisation and how you'd like to work with ARK…"></textarea>
+              <div class="field-error" id="message-error">Please enter a message.</div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Send Message
+            </button>
+          </form>
+
+          <div class="form-notice" id="formNotice"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 ARK. All rights reserved. &nbsp;·&nbsp; Built with 💚 for community. &nbsp;·&nbsp; <a href="mailto:acepowell101@gmail.com">acepowell101@gmail.com</a></p>
+  </footer>
+
+  <script>
+    // ─── FORM HANDLING ───
+    const form = document.getElementById('contactForm');
+    const notice = document.getElementById('formNotice');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function setError(id, show) {
+      const field = document.getElementById(id);
+      const err = document.getElementById(id + '-error');
+      if (show) { field.classList.add('error'); err.classList.add('show'); }
+      else       { field.classList.remove('error'); err.classList.remove('show'); }
+    }
+
+    function validateEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    form.addEventListener('input', e => {
+      const id = e.target.id;
+      if (id === 'name' && e.target.value.trim()) setError('name', false);
+      if (id === 'email' && validateEmail(e.target.value)) setError('email', false);
+      if (id === 'biztype' && e.target.value) setError('biztype', false);
+      if (id === 'message' && e.target.value.trim()) setError('message', false);
+    });
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      notice.className = 'form-notice';
+      notice.textContent = '';
+
+      const name    = document.getElementById('name').value.trim();
+      const email   = document.getElementById('email').value.trim();
+      const biztype = document.getElementById('biztype').value;
+      const message = document.getElementById('message').value.trim();
+
+      let valid = true;
+      if (!name)               { setError('name', true);    valid = false; }
+      if (!validateEmail(email)){ setError('email', true);  valid = false; }
+      if (!biztype)            { setError('biztype', true); valid = false; }
+      if (!message)            { setError('message', true); valid = false; }
+      if (!valid) return;
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> Sending…`;
+
+      // ─────────────────────────────────────────────────────────────────────
+      // TODO: Replace the fetch below with your real email API call.
+      // Options:
+      //   • Resend: https://resend.com/docs — POST to /api/send
+      //   • SendGrid: https://docs.sendgrid.com/api-reference/mail-send
+      //   • Nodemailer: set up an Express / Next.js API route at /api/contact
+      //   • Formspree: action="https://formspree.io/f/YOUR_FORM_ID"
+      //
+      // All calls should forward fields to: acepowell101@gmail.com
+      // NEVER expose API keys in frontend; use a server-side proxy or env vars.
+      // ─────────────────────────────────────────────────────────────────────
+
+      // Simulated send for demo purposes (remove this block in production):
+      await new Promise(r => setTimeout(r, 1400));
+      const simSuccess = true; // toggle to false to test error state
+
+      try {
+        if (simSuccess) {
+          notice.className = 'form-notice success';
+          notice.textContent = '✅ Thank you. Your message has been sent.';
+          form.reset();
+        } else {
+          throw new Error('Server error');
+        }
+      } catch {
+        notice.className = 'form-notice error-msg';
+        notice.textContent = '❌ Something went wrong. Please try again or email acepowell101@gmail.com.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send Message`;
+        notice.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+  </script>
+</body>
+</html>
